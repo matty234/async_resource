@@ -158,32 +158,25 @@ abstract class NetworkResource<T> extends AsyncResource<T> {
       bool allowCacheFallback: true,
       bool skipCacheWrite: false}) async {
     if (cache.data != null && !forceReload) {
-      // print('${cache.basename}: Using previously loaded value.');
       return cache.data;
     } else if (forceReload ||
         strategy == CacheStrategy.networkFirst ||
         await isExpired) {
-      print('${cache.basename}: Fetching from $url');
       final contents = await _tryFetchContents();
       if (contents != null) {
-        print('$url Fetched.');
         if (!skipCacheWrite) {
-          print('Updating cache...');
           return cache.write(contents);
         } else {
           return cache._update(contents);
         }
       } else {
         if (allowCacheFallback) {
-          print('$url Using a cached copy if available.');
           return cache.get();
         } else {
-          print('Not attempting to find in cache.');
           return null;
         }
       }
     } else {
-      print('Loading cached copy of ${cache.basename}');
       return cache.get();
     }
   }
